@@ -1,5 +1,8 @@
-String CAMERA_NAME = "USB_Camera #2,size=240x135,fps=15";
- 
+String CAMERA_NAME = "name=USB_Camera #3,size=480x270,fps=15";
+int vidWidth = 480;
+int vidHeight = 270; 
+
+
 int m = millis();
  
 /**
@@ -21,7 +24,7 @@ void setup() {
   
   // Run Windows
   PApplet.runSketch(new String[] {settingState.getClass().getSimpleName()}, settingState);
-  
+  PApplet.runSketch(new String[] {audienceState.getClass().getSimpleName()}, audienceState);
   PApplet.runSketch(new String[] {dancerState.getClass().getSimpleName()}, dancerState);
   PApplet.runSketch(new String[] {visualization.getClass().getSimpleName()}, visualization);
 }
