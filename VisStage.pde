@@ -1,8 +1,8 @@
 
 public abstract class VisStage {
-  protected PApplet parent;
+  protected Visualization parent;
   
-  public VisStage(PApplet parentApplet) {
+  public VisStage(Visualization parentApplet) {
     this.parent = parentApplet;
   }
   

@@ -115,6 +115,7 @@ public class DancerState extends State {
       
       colors[colorToChange-1] = c;
       hues[colorToChange-1] = hue;
+      dancers[colorToChange-1].c = c;
       
       //println("color index " + (colorToChange-1) + ", value: " + hue);
     }

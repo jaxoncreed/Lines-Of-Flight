@@ -1,6 +1,6 @@
 public class VisStage0 extends VisStage {
   
-  public VisStage0(PApplet parentApplet) {
+  public VisStage0(Visualization parentApplet) {
     super(parentApplet); 
   }
   

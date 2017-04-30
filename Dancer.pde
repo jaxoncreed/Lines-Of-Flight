@@ -5,7 +5,7 @@ class Dancer {
   public PVector position; //original position (x,y,z)
   public PVector old_position; //old position of dancer
   
-  color c;
+  public color c;
   
   //currently not in use
   float speed;

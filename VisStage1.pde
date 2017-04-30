@@ -1,7 +1,7 @@
 public class VisStage1 extends VisStage {
 
   
-  public VisStage1(PApplet parentApplet) {
+  public VisStage1(Visualization parentApplet) {
     super(parentApplet);
   }
   
@@ -19,7 +19,11 @@ public class VisStage1 extends VisStage {
   }
   
   void drawFannedLines(Dancer dancer, Dancer[] dancers) {
-    parent.line(parent.getScreenAdustedX(dancer.old_position.x), dancer.old_position.y, dancer.position.x, dancer.position.y);
+    parent.stroke(dancer.c);
+    parent.line(parent.getScreenAdustedX(dancer.old_position.x),
+        parent.getScreenAdustedY(dancer.old_position.y),
+        parent.getScreenAdustedX(dancer.position.x),
+        parent.getScreenAdustedY(dancer.position.y));
     
     if(millis() - m >= 1000) { //updates dancer's position every 1 second (1000 ms)
       for(Dancer d : dancers) {
