@@ -29,4 +29,29 @@ class Visualization extends PApplet {
     }
     this.stages.get(this.settingState.stage).display(this.settingState, this.audienceState, this.dancerState);
   }
+  
+  public int getScreenAdustedX(int x) {
+    if (this.width / this.height > vidWidth / vidHeight) {
+      // constrained by height
+      return (this.height / vidHeight) * x;
+    } else {
+      // constrained by width
+      return (this.width / vidWidth) * x;
+    }
+  }
+  public int getScreenAdustedX(float x) {
+    return this.getScreenAdustedX((int) x);
+  }
+  public int getScreenAdustedY(int y) {
+    if (this.width / this.height > vidWidth / vidHeight) {
+      // constrained by height
+      return (this.height / vidHeight) * y;
+    } else {
+      // constrained by width
+      return (this.width / vidWidth) * y;
+    }
+  }
+  public int getScreenAdustedY(float x) {
+    return this.getScreenAdustedY((int) x);
+  }
 }

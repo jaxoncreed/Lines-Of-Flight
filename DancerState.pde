@@ -49,15 +49,13 @@ public class DancerState extends State {
   }
  
   public void settings() {
-    size(vidWidth + vidWidth / 4 + 30, vidHeight + 50);
+    size(vidWidth * 2 + vidWidth / 2 + 30, vidHeight * 2 + 50);
   }
   
   public void setup() {
     this.video = new Capture(this, CAMERA_NAME);
     this.video.start();
     // init OpenCV with input resolution
-    print(this.video.width);
-    print(this.video.height);
     opencv = new OpenCV(this, vidWidth, vidHeight);
     
     // Set thresholding
@@ -83,7 +81,7 @@ public class DancerState extends State {
     cp5.addSlider("threshold")
      .setRange(0,255)
      .setValue(threshold)
-     .setPosition(0,vidHeight)
+     .setPosition(0,vidHeight * 2)
      .setSize(this.width,20);
   }
   
@@ -94,9 +92,8 @@ public class DancerState extends State {
   void keyPressed() {
     //For selction of colors to track
     //uses QWERTY keys
-     if (key == '7') {
-      colorToChange = 1;
-      
+    if (key == '7') {
+      colorToChange = 1;  
     } else if (key == '8') {
       colorToChange = 2;
       
@@ -178,9 +175,6 @@ public class DancerState extends State {
             
           // Basic threshold - range [0, 255]
           } else {
-            if (count % 100 == 0) {
-              println(threshold);
-            }
             opencv.threshold(threshold);
           }
         
@@ -221,15 +215,15 @@ public class DancerState extends State {
       
       // Show images
       if (colorToChange == -1) {
-        image(src, 0, 0);
+        image(src, 0, 0, src.width * 2, src.height * 2);
       }
       for (int i = 0; i<outputs.length; i++) {
         if (outputs[i] != null) {
-          image(outputs[i], src.width+30, i*src.height/4, src.width/4, src.height/4);
+          image(outputs[i], src.width * 2 +30, i*src.height / 2, src.width / 2, src.height / 2);
               
           noStroke();
           fill(colors[i]);
-          rect(src.width, i*src.height/4, 30, src.height/4);
+          rect(src.width * 2, i*src.height/2, 30, src.height/2);
         }
       }
           
@@ -285,7 +279,7 @@ public class DancerState extends State {
         // <12> Draw a dot in the middle of the bounding box, on the object.
         noStroke(); 
         fill(255, 255, 255);
-        ellipse(r.x + r.width/2, r.y + r.height/2, 30, 30);
+        ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
       }
     
       for (int i = 0; i < d1_positions.size(); i++) {
@@ -342,7 +336,7 @@ public class DancerState extends State {
         // <12> Draw a dot in the middle of the bounding box, on the object.
         noStroke(); 
         fill(255, 255, 255);
-        ellipse(r.x + r.width/2, r.y + r.height/2, 30, 30);
+        ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
       }
       
       for (int i = 0; i < d2_positions.size(); i++) {
@@ -398,9 +392,11 @@ public class DancerState extends State {
         //rect(r.x, r.y, r.width, r.height);
         
         // <12> Draw a dot in the middle of the bounding box, on the object.
-        noStroke(); 
-        fill(255, 255, 255);
-        ellipse(r.x + r.width/2, r.y + r.height/2, 30, 30);
+        if (colorToChange == -1) {
+          noStroke(); 
+          fill(255, 255, 255);
+          ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
+        }
       }
       
       for (int i = 0; i < d3_positions.size(); i++) {

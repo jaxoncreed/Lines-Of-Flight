@@ -37,6 +37,4 @@ class Dancer {
     old_position = position; //update old pos to be previous position
     position = new_pos; //change position to new position
   }
-  
-  
 }
