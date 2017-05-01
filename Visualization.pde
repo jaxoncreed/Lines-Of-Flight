@@ -22,6 +22,10 @@ class Visualization extends PApplet {
     fullScreen(1);
   }
   
+  public void setup() {
+    frameRate(40);
+  }
+  
   public void draw() {
     if (this.settingState.stage != this.currentStage) {
       this.stages.get(this.settingState.stage).init();

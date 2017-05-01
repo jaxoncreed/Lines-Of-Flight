@@ -1,6 +1,6 @@
-String CAMERA_NAME = "USB_Camera #3,size=480x270,fps=15";
-int vidWidth = 480;
-int vidHeight = 270; 
+String CAMERA_NAME = "name=FaceTime HD Camera,size=320x180,fps=30";
+int vidWidth = 320;
+int vidHeight = 180; 
 
 
 int m = millis();

@@ -8,6 +8,7 @@ int count = 0;
 public class DancerState extends State {
   SettingState settingState;
   Capture video;
+  //Movie video;
   OpenCV opencv;
   ArrayList<PVector> position = new ArrayList();
   ArrayList<Rectangle> d1_positions = new ArrayList();
@@ -38,9 +39,9 @@ public class DancerState extends State {
 
 
   // Main Exportables
-  Dancer d1 = new Dancer();
-  Dancer d2 = new Dancer();
-  Dancer d3 = new Dancer();
+  Dancer d1 = new Dancer(color(255, 255, 255, 15));
+  Dancer d2 = new Dancer(color(7, 11, 76, 15));
+  Dancer d3 = new Dancer(color(148, 18, 96, 15));
   
   public Dancer[] dancers = {d1, d2, d3};
   
@@ -55,6 +56,8 @@ public class DancerState extends State {
   public void setup() {
     this.video = new Capture(this, CAMERA_NAME);
     this.video.start();
+    //video = new Movie(this, "/Users/m/Documents/Processing/LinesOfFlight/data/Video2.mov");
+    //video.loop();
     // init OpenCV with input resolution
     opencv = new OpenCV(this, vidWidth, vidHeight);
     
@@ -115,7 +118,7 @@ public class DancerState extends State {
       
       colors[colorToChange-1] = c;
       hues[colorToChange-1] = hue;
-      dancers[colorToChange-1].c = c;
+      // dancers[colorToChange-1].c = c;
       
       //println("color index " + (colorToChange-1) + ", value: " + hue);
     }
@@ -425,6 +428,10 @@ public class DancerState extends State {
   
   public void captureEvent(Capture c) {
     c.read();
+  }
+  
+  void movieEvent(Movie m) {
+    m.read();
   }
   
 }

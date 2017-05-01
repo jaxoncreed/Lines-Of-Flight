@@ -10,7 +10,7 @@ public class AudienceState extends State {
   PImage baseImg;
   PImage compared;
   int frameNum = 0;
-  int areaDimension = 16;
+  int areaDimension = 8;
   // Kernel for edge detection
   float[][] kernel = {{ -3, -3, -3}, 
                       { -3,  23, -3}, 
@@ -20,8 +20,12 @@ public class AudienceState extends State {
   public int width = 0;
   public int height = 0;
   
+  public ArrayList<AudienceMember> audience;
+  
+  
   AudienceState(SettingState settingState) {
     this.settingState = settingState;
+    this.audience = new ArrayList<AudienceMember>();
   }
  
   public void settings() {
@@ -29,7 +33,7 @@ public class AudienceState extends State {
   }
   
   public void setup() {
-    baseImg = createImage(480, 270, RGB);
+    baseImg = createImage(vidWidth, vidHeight, RGB);
     baseImg.loadPixels();
     myMovie = new Capture(this, CAMERA_NAME);
     myMovie.start();
@@ -37,17 +41,17 @@ public class AudienceState extends State {
     /**
      * UI
      */
-    cp5 = new ControlP5(this);
+    /*cp5 = new ControlP5(this);
     cp5.addSlider("thresholdSlide")
      .setRange(0 ,0xFFFFFF)
-     .setValue(threshold)
+     .setValue(75)
      .setPosition(0,720)
-     .setSize(this.width,20);
+     .setSize(this.width,20);*/
   }
   
-  void thresholdSlide(int value) {
+  /*void thresholdSlide(int value) {
     this.threshold = value;
-  }
+  }*/
     
   void draw() {
     image(myMovie, 0, 0, 640, 360);
@@ -122,12 +126,19 @@ public class AudienceState extends State {
       int[][] blobAreas = new int[areasWidth][areasHeight];
       int blobNum = 1;
       noFill();
-      
+      audience.clear();
       for (int areaX = 0; areaX < areasWidth; areaX++) {
         for (int areaY = 0; areaY < areasHeight; areaY++) {
           if (blobAreas[areaX][areaY] == 0 && thresholdImg.pixels[getIndexFromXY(areaX * areaDimension, areaY * areaDimension, myMovie.width, myMovie.height)] > 0x00000) {
             int[] squareDimensions = recursiveBlobCheck(areaX, areaY, areaX, areaY, areaX, areaY, blobAreas, blobNum, thresholdImg);
+            stroke(255, 255, 255);
+            noFill();
             rect(squareDimensions[2] * areaDimension / 2, squareDimensions[3] * areaDimension / 2, ((squareDimensions[2] + squareDimensions[0]) * areaDimension) / 2, ((squareDimensions[3] + squareDimensions[1]) * areaDimension) / 2);
+            int averageX = (squareDimensions[1] + squareDimensions[3]) / 2;
+            int averageY = (squareDimensions[0] + squareDimensions[2]) / 2;
+            fill(255, 255, 255);
+            ellipse(averageX * areaDimension - 15, averageY * areaDimension - 15, 30, 30);
+            audience.add(new AudienceMember(averageX * areaDimension, averageY * areaDimension));
             blobNum++;
           }
         }
@@ -170,8 +181,8 @@ public class AudienceState extends State {
   
   
   
-    int getIndexFromXY(int x, int y, int width, int height) {
-     return (y * width) + x;
+  int getIndexFromXY(int x, int y, int width, int height) {
+    return (y * width) + x;
   }
   int[] getXYFromIndex(int index, int width, int height) {
     int result[] = new int[2];
@@ -199,10 +210,10 @@ public class AudienceState extends State {
     int[] returnedL = recursiveBlobCheck(maxX, maxY, minX, minY, curX, curY - 1, blobs, blobNum, thresholdImg);
     
     int[] answer = {
-      max(new int[]{maxX, curX, returnedT[0], returnedR[0], returnedL[0], returnedB[0]}),
-      max(new int[]{maxY, curY, returnedT[1], returnedR[1], returnedL[1], returnedB[1]}),
-      min(new int[]{minX, curX, returnedT[2], returnedR[2], returnedL[2], returnedB[2]}),
-      min(new int[]{minY, curY, returnedT[3], returnedR[3], returnedL[3], returnedB[3]})
+      max(new int[]{maxX, curX, returnedT[0], returnedR[0], returnedL[0], returnedB[0]}), // top
+      max(new int[]{maxY, curY, returnedT[1], returnedR[1], returnedL[1], returnedB[1]}), // right
+      min(new int[]{minX, curX, returnedT[2], returnedR[2], returnedL[2], returnedB[2]}), // bottom
+      min(new int[]{minY, curY, returnedT[3], returnedR[3], returnedL[3], returnedB[3]}) // left
     };
     return answer;
   }
