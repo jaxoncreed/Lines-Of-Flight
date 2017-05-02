@@ -7,6 +7,9 @@ public class VisStage2 extends VisStage {
   @Override
   public void init() {
     parent.background(250, 43, 47); //blood orange color for phase II
+    danLayer.beginDraw();
+    danLayer.background(250, 43, 47, 150);
+    danLayer.endDraw();
   }
   
 
@@ -15,13 +18,18 @@ public class VisStage2 extends VisStage {
     for (Dancer dancer : dancerState.dancers) {
       drawFur(dancer);
     }
+    this.drawAudience(color(250, 43, 47), audienceState.audience);
+    parent.image(audLayer, 0, 0); //draw audience layer behind
+    parent.image(danLayer, 0, 0); //draw dancer layer in front
   }
   
   void drawFur(Dancer dancer) {
-    parent.stroke(dancer.c);
+    danLayer.beginDraw();
+    danLayer.stroke(dancer.c);
+    danLayer.strokeWeight(1);
     dancer.points[dancer.count][0] = dancer.position.x;
     dancer.points[dancer.count][1] = dancer.position.y;
-    parent.line(parent.getScreenAdustedX(dancer.old_position.x),
+    danLayer.line(parent.getScreenAdustedX(dancer.old_position.x),
         parent.getScreenAdustedY(dancer.old_position.y),
         parent.getScreenAdustedX(dancer.position.x),
         parent.getScreenAdustedY(dancer.position.y));
@@ -32,12 +40,13 @@ public class VisStage2 extends VisStage {
         float d = dx * dx + dy * dy;
   
         if (d < 1000 && Math.random() > d / 1000) { //larger numbers make thicker fur
-            parent.line(parent.getScreenAdustedX(dancer.old_position.x + (dx * 0.5)),
+            danLayer.line(parent.getScreenAdustedX(dancer.old_position.x + (dx * 0.5)),
                 parent.getScreenAdustedY(dancer.old_position.y + (dy * 0.5)),
                 parent.getScreenAdustedX(dancer.position.x - (dx * 0.5)),
                 parent.getScreenAdustedY(dancer.position.y - (dy * 0.5)));
         }
     }
+    danLayer.endDraw();
   
     //wrap inputs around in the array to not get null pointer exceptions
     dancer.count = (dancer.count + 1) % 50;

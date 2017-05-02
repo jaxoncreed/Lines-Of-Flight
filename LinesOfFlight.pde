@@ -25,6 +25,6 @@ void setup() {
   // Run Windows
   PApplet.runSketch(new String[] {audienceState.getClass().getSimpleName()}, audienceState);
   PApplet.runSketch(new String[] {dancerState.getClass().getSimpleName()}, dancerState);
-  // PApplet.runSketch(new String[] {visualization.getClass().getSimpleName()}, visualization);
+  PApplet.runSketch(new String[] {visualization.getClass().getSimpleName()}, visualization);
   PApplet.runSketch(new String[] {settingState.getClass().getSimpleName()}, settingState);
 }

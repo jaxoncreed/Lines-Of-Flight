@@ -10,12 +10,6 @@ class Visualization extends PApplet {
     this.settingState = settingState;
     this.audienceState = audienceState;
     this.dancerState = dancerState;
-    
-    this.stages = new ArrayList<VisStage>();
-    stages.add(new VisStage0(this));
-    stages.add(new VisStage1(this));
-    stages.add(new VisStage2(this));
-    stages.add(new VisStage3(this));
   }
   
   public void settings() {
@@ -24,6 +18,11 @@ class Visualization extends PApplet {
   
   public void setup() {
     frameRate(40);
+    this.stages = new ArrayList<VisStage>();
+    stages.add(new VisStage0(this));
+    stages.add(new VisStage1(this));
+    stages.add(new VisStage2(this));
+    stages.add(new VisStage3(this));
   }
   
   public void draw() {
@@ -37,7 +36,7 @@ class Visualization extends PApplet {
   public int getScreenAdustedX(int x) {
     if (this.width / this.height > vidWidth / vidHeight) {
       // constrained by height
-      return (this.height / vidHeight) * x + (this.width - ((this.height / vidHeight) * x)) / 2;
+      return (this.height / vidHeight) * x + (this.width - ((this.height / vidHeight) * vidWidth)) / 2;
     } else {
       // constrained by width
       return (this.width / vidWidth) * x;
@@ -52,7 +51,7 @@ class Visualization extends PApplet {
       return (this.height / vidHeight) * y;
     } else {
       // constrained by width
-      return (this.width / vidWidth) * y + (this.width - ((this.width / vidWidth) * y)) / 2;
+      return (this.width / vidWidth) * y + (this.height - ((this.width / vidWidth) * vidWidth)) / 2;
     }
   }
   public int getScreenAdustedY(float x) {

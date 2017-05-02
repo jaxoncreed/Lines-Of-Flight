@@ -7,6 +7,10 @@ public class VisStage3 extends VisStage {
   @Override
   public void init() {
     parent.background(84, 172, 174);
+    danLayer.beginDraw();
+    danLayer.background(84, 172, 174, 175);
+    danLayer.endDraw();
+
   }
   
   @Override
@@ -14,13 +18,18 @@ public class VisStage3 extends VisStage {
     for (Dancer dancer : dancerState.dancers) {
       drawWeb(dancer);
     }
+    this.drawAudience(color(84, 172, 174), audienceState.audience);
+    parent.image(audLayer, 0, 0); //draw audience layer behind
+    parent.image(danLayer, 0, 0); //draw dancer layer in front
   }
   
   void drawWeb(Dancer dancer) {
-    parent.stroke(dancer.c);
+    danLayer.beginDraw();
+    danLayer.stroke(dancer.c);
+    danLayer.strokeWeight(2);
     dancer.points[dancer.count][0] = dancer.position.x;
     dancer.points[dancer.count][1] = dancer.position.y;
-    parent.line(parent.getScreenAdustedX(dancer.old_position.x),
+    danLayer.line(parent.getScreenAdustedX(dancer.old_position.x),
         parent.getScreenAdustedY(dancer.old_position.y),
         parent.getScreenAdustedX(dancer.position.x),
         parent.getScreenAdustedY(dancer.position.y));
@@ -34,12 +43,13 @@ public class VisStage3 extends VisStage {
       //bigger number > d makes thicker webs
       //wider threshold (smaller decimal) for random values makes webs more saturated
       if (d < 1500 && Math.random() > 0.75) {
-        parent.line(parent.getScreenAdustedX(dancer.points[dancer.count][0]),
+        danLayer.line(parent.getScreenAdustedX(dancer.points[dancer.count][0]),
             parent.getScreenAdustedY(dancer.points[dancer.count][1]),
             parent.getScreenAdustedX(dancer.points[j][0]),
             parent.getScreenAdustedY(dancer.points[j][1]));
       }
     }
+    danLayer.endDraw();
     
     dancer.count = (dancer.count + 1) % 50;
     dancer.old_position.x = dancer.position.x;
