@@ -37,7 +37,7 @@ class Visualization extends PApplet {
   public int getScreenAdustedX(int x) {
     if (this.width / this.height > vidWidth / vidHeight) {
       // constrained by height
-      return (this.height / vidHeight) * x;
+      return (this.height / vidHeight) * x + (this.width - ((this.height / vidHeight) * x)) / 2;
     } else {
       // constrained by width
       return (this.width / vidWidth) * x;
@@ -52,7 +52,7 @@ class Visualization extends PApplet {
       return (this.height / vidHeight) * y;
     } else {
       // constrained by width
-      return (this.width / vidWidth) * y;
+      return (this.width / vidWidth) * y + (this.width - ((this.width / vidWidth) * y)) / 2;
     }
   }
   public int getScreenAdustedY(float x) {

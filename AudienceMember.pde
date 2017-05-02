@@ -1,6 +1,6 @@
 class AudienceMember {
-  public PVector old_position;
-  public PVector position;
+  public PVector old_position = new PVector();
+  public PVector position = new PVector();
   public color c;
   
   AudienceMember(float x, float y) {

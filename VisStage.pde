@@ -10,5 +10,4 @@ public abstract class VisStage {
   
   public abstract void display(SettingState settingState, AudienceState audienceState, DancerState dancerState);
   
-  
 }

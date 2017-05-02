@@ -29,7 +29,7 @@ public class AudienceState extends State {
   }
  
   public void settings() {
-    size(1280, 740);
+    size(vidWidth * 2, vidHeight * 2);
   }
   
   public void setup() {
@@ -54,7 +54,7 @@ public class AudienceState extends State {
   }*/
     
   void draw() {
-    image(myMovie, 0, 0, 640, 360);
+    image(myMovie, 0, 0);
     
     if (frameNum % 1 == 0) {
       
@@ -129,18 +129,19 @@ public class AudienceState extends State {
       audience.clear();
       for (int areaX = 0; areaX < areasWidth; areaX++) {
         for (int areaY = 0; areaY < areasHeight; areaY++) {
-          if (blobAreas[areaX][areaY] == 0 && thresholdImg.pixels[getIndexFromXY(areaX * areaDimension, areaY * areaDimension, myMovie.width, myMovie.height)] > 0x00000) {
+          if (blobAreas[areaX][areaY] == 0 && thresholdImg.pixels[getIndexFromXY(areaX * areaDimension, areaY * areaDimension, vidWidth, vidHeight)] > 0x000000) {
             int[] squareDimensions = recursiveBlobCheck(areaX, areaY, areaX, areaY, areaX, areaY, blobAreas, blobNum, thresholdImg);
-            stroke(255, 255, 255);
+            stroke(255, 0, 0);
             noFill();
-            rect(squareDimensions[2] * areaDimension / 2, squareDimensions[3] * areaDimension / 2, ((squareDimensions[2] + squareDimensions[0]) * areaDimension) / 2, ((squareDimensions[3] + squareDimensions[1]) * areaDimension) / 2);
-            int averageX = (squareDimensions[1] + squareDimensions[3]) / 2;
-            int averageY = (squareDimensions[0] + squareDimensions[2]) / 2;
-            fill(255, 255, 255);
-            ellipse(averageX * areaDimension - 15, averageY * areaDimension - 15, 30, 30);
+            rect(squareDimensions[2] * areaDimension, squareDimensions[3] * areaDimension, ((squareDimensions[0] - squareDimensions[2] + 1) * areaDimension), ((squareDimensions[1] - squareDimensions[3] + 1) * areaDimension));
+            float averageX = ((float)(squareDimensions[0] + squareDimensions[2]) / 2) * areaDimension + (areaDimension / 2);
+            float averageY = ((float)(squareDimensions[1] + squareDimensions[3]) / 2) * areaDimension + (areaDimension / 2);
+            fill(255, 0, 0);
+            ellipse(averageX, averageY, 4, 4);
             audience.add(new AudienceMember(averageX * areaDimension, averageY * areaDimension));
             blobNum++;
           }
+          thresholdImg.updatePixels();
         }
       }
       
@@ -169,9 +170,9 @@ public class AudienceState extends State {
       // State that there are changes to edgeImg.pixels[]
       edgeImg.updatePixels();
       
-      image(compared, 640, 0, 640, 360);
-      image(edgeImg, 0, 360, 640, 360);
-      image(thresholdImg, 640, 360, 640, 360);
+      image(compared, vidWidth, 0);
+      image(edgeImg, 0, vidHeight);
+      image(thresholdImg, vidWidth, vidHeight);
     }
   }
   
@@ -197,11 +198,11 @@ public class AudienceState extends State {
         curY > blobs[curX].length - 1 ||
         curY < 0 ||
         blobs[curX][curY] != 0 ||
-        thresholdImg.pixels[getIndexFromXY(curX * areaDimension, curY * areaDimension, myMovie.width, myMovie.height)] <= 0x00000) {
-        int[] baseReturn = {maxX, maxY, minX, minY};
+        thresholdImg.pixels[getIndexFromXY(curX * areaDimension, curY * areaDimension, vidWidth, vidHeight)] <= 0x000000) {
+      int[] baseReturn = {maxX, maxY, minX, minY};
       return baseReturn;
     }
-    
+
     blobs[curX][curY] = blobNum;
     
     int[] returnedT = recursiveBlobCheck(maxX, maxY, minX, minY, curX - 1, curY, blobs, blobNum, thresholdImg);
@@ -210,10 +211,10 @@ public class AudienceState extends State {
     int[] returnedL = recursiveBlobCheck(maxX, maxY, minX, minY, curX, curY - 1, blobs, blobNum, thresholdImg);
     
     int[] answer = {
-      max(new int[]{maxX, curX, returnedT[0], returnedR[0], returnedL[0], returnedB[0]}), // top
-      max(new int[]{maxY, curY, returnedT[1], returnedR[1], returnedL[1], returnedB[1]}), // right
-      min(new int[]{minX, curX, returnedT[2], returnedR[2], returnedL[2], returnedB[2]}), // bottom
-      min(new int[]{minY, curY, returnedT[3], returnedR[3], returnedL[3], returnedB[3]}) // left
+      max(new int[]{maxX, curX, returnedT[0], returnedR[0], returnedL[0], returnedB[0]}), // right
+      max(new int[]{maxY, curY, returnedT[1], returnedR[1], returnedL[1], returnedB[1]}), // bottom
+      min(new int[]{minX, curX, returnedT[2], returnedR[2], returnedL[2], returnedB[2]}), // left
+      min(new int[]{minY, curY, returnedT[3], returnedR[3], returnedL[3], returnedB[3]}) // top
     };
     return answer;
   }
