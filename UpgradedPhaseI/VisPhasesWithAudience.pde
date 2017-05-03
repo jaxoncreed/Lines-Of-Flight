@@ -15,14 +15,21 @@ float dy;
 float d;
 
 int m = millis();
+PGraphics bgLayer;
 PGraphics audLayer;
 PGraphics danLayer;
 
+int r1;
+int rd;
+
 void setup() {
   size(1000, 500);
+  r1 = 173;
+  rd = 1;
 
   audLayer = createGraphics(1000, 500);
   danLayer = createGraphics(1000, 500);
+  bgLayer = createGraphics(1000, 500);
   danLayer.beginDraw();
   danLayer.background(173, 183, 247, 175); //important!!! covers up weird gray bg color in dancer layer
   danLayer.endDraw();
@@ -45,8 +52,16 @@ void draw() {
     dancer.move();
     
     if(dancer.phase == 1) {
-      drawAudience(color(173, 183, 247));
-      drawFannedLines(dancer);
+      r1 = r1 + rd; //make the background color change gradually back and forth
+      if(r1 > 240 || r1 < 140) {
+        rd = -rd;
+      }
+      
+      //drawBgEffects();
+      drawAudience(color(r1, 183, 247));
+      //drawFannedLines(dancer);
+      drawCurves(dancer);
+      image(bgLayer, 0, 0);
       image(audLayer, 0, 0); //draw audience layer behind
       image(danLayer, 0, 0); //draw dancer layer in front
       
@@ -73,7 +88,7 @@ void keyPressed() {
     //pressing these keys will also clear the visualization in that phase
     if(key == '1') { //PHASE I
       d.phase = 1;
-      
+
       danLayer.beginDraw();
       danLayer.background(173, 183, 247, 150); //clears what was on dancer layer before
       danLayer.endDraw();
@@ -81,6 +96,7 @@ void keyPressed() {
     } else if(key == '2') { //PHASE II
       d.phase = 2;
       
+      d.count = 0;
       danLayer.beginDraw();
       danLayer.background(250, 43, 47, 150);
       danLayer.endDraw();
@@ -97,7 +113,7 @@ void keyPressed() {
 
 void drawAudience(color c) {
     audLayer.beginDraw();
-    audLayer.background(c); //this line is very important!!! it clears away audience residue
+    audLayer.background(c, 100); //this line is very important!!! it clears away audience residue
     for(int n = 0; n < audience.size(); n++) {
         AudienceMember a = audience.get(n);
         audLayer.noStroke();
@@ -130,6 +146,49 @@ void drawFannedLines(Dancer dancer) {
   }
 }
 
+void drawCurves(Dancer d) {
+  danLayer.beginDraw();
+  danLayer.stroke(d.c);
+  danLayer.endDraw();
+  d.PX = d.x;
+  d.PY = d.y;
+  dragSegment(0, d.PX, d.PY, d);
+  
+  for(int i = 0; i < d.points.length - 1; i++) {
+      dragSegment(i+1, d.points[i][0], d.points[i][1], d);
+  }
+}
+  
+void dragSegment(int i, float xidx, float yidx, Dancer d) {
+  float dx = xidx - d.points[i][0];
+  float dy = yidx - d.points[i][1];
+  float angle = atan2(dy, dx);
+  d.points[i][0] = xidx - cos(angle) * d.segLength;
+  d.points[i][1] = yidx - sin(angle) * d.segLength;
+  segment(d.points[i][0], d.points[i][1], angle, d);
+}
+
+void segment(float x, float y, float a, Dancer d) {
+  danLayer.beginDraw();
+  danLayer.strokeWeight(1);
+  danLayer.stroke(d.c);
+  danLayer.pushMatrix();
+  danLayer.translate(x, y);
+  danLayer.rotate(a);
+  danLayer.line(0, 0, d.segLength, 0); //put in d.x and d.y instead of 0 for tons of cool lines
+  danLayer.popMatrix();
+  danLayer.endDraw();
+}
+
+//draws background effects on the bottom-most layer of the vis
+void drawBgEffects() { 
+  bgLayer.beginDraw();
+  bgLayer.fill(148, 18, 96, 100);
+  bgLayer.noStroke();
+  bgLayer.ellipse(random(0, 1000), random(0, 500), 50, 50);
+  bgLayer.endDraw();
+}
+
 /*
 draws lines with furry texture from the dancer's old x and y positions,
 which are updated constantly, not every second like in phase I
@@ -157,7 +216,7 @@ void drawFur(Dancer dancer) {
     danLayer.endDraw();
   
     //wrap inputs around in the array to not get null pointer exceptions
-    dancer.count = (dancer.count + 1) % 50;
+    dancer.count = (dancer.count + 1) % dancer.points.length;
     
     dancer.oldx = dancer.x; //update dancer's old x and y values constantly
     dancer.oldy = dancer.y;
@@ -191,7 +250,7 @@ void drawWeb(Dancer dancer) {
   }
   danLayer.endDraw();
   
-  dancer.count = (dancer.count + 1) % 50;
+  dancer.count = (dancer.count + 1) % dancer.points.length;
   dancer.oldx = dancer.x;
   dancer.oldy = dancer.y;
 }

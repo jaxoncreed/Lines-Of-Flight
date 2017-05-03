@@ -7,6 +7,11 @@ class Dancer {
   float[][] points;
   int count;
   int phase;
+  
+  //variables for the wispy curves in phase I
+  float PY;
+  float PX;
+  int segLength;
 
   Dancer() {
     this(225, 200, color(74, 1, 68, 50));
@@ -20,7 +25,8 @@ class Dancer {
     this.c = c;
     
     this.phase = 1;
-    this.points = new float[50][2];
+    this.points = new float[25][2];
+    this.segLength = 5;
   }
   
   void move() {

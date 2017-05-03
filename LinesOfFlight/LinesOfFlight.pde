@@ -1,7 +1,6 @@
 String CAMERA_NAME = "name=FaceTime HD Camera,size=320x180,fps=30";
-int vidWidth = 320;
-int vidHeight = 180; 
-
+int vidWidth = 640; //320
+int vidHeight = 426; //180
 
 int m = millis();
  
@@ -25,6 +24,6 @@ void setup() {
   // Run Windows
   PApplet.runSketch(new String[] {audienceState.getClass().getSimpleName()}, audienceState);
   PApplet.runSketch(new String[] {dancerState.getClass().getSimpleName()}, dancerState);
-  // PApplet.runSketch(new String[] {visualization.getClass().getSimpleName()}, visualization);
+  PApplet.runSketch(new String[] {visualization.getClass().getSimpleName()}, visualization);
   PApplet.runSketch(new String[] {settingState.getClass().getSimpleName()}, settingState);
 }

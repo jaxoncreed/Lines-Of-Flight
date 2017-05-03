@@ -7,8 +7,8 @@ int count = 0;
 
 public class DancerState extends State {
   SettingState settingState;
-  Capture video;
-  //Movie video;
+  //Capture video;
+  Movie video;
   OpenCV opencv;
   ArrayList<PVector> position = new ArrayList();
   ArrayList<Rectangle> d1_positions = new ArrayList();
@@ -54,10 +54,10 @@ public class DancerState extends State {
   }
   
   public void setup() {
-    this.video = new Capture(this, CAMERA_NAME);
-    this.video.start();
-    //video = new Movie(this, "/Users/m/Documents/Processing/LinesOfFlight/data/Video2.mov");
-    //video.loop();
+    //this.video = new Capture(this, CAMERA_NAME);
+    //this.video.start();
+    video = new Movie(this, "/Users/stavros/Desktop/school/TAP/NewRepo/Lines-Of-Flight/LinesOfFlight/data/TestFootage1.mov");
+    video.loop();
     // init OpenCV with input resolution
     opencv = new OpenCV(this, vidWidth, vidHeight);
     

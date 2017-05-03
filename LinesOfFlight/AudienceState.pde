@@ -5,7 +5,8 @@ public class AudienceState extends State {
   SettingState settingState;
   
   // All this is kinda messy
-  Capture myMovie;
+  //Capture myMovie;
+  Movie myMovie;
   ControlP5 cp5;
   PImage baseImg;
   PImage compared;
@@ -35,8 +36,10 @@ public class AudienceState extends State {
   public void setup() {
     baseImg = createImage(vidWidth, vidHeight, RGB);
     baseImg.loadPixels();
-    myMovie = new Capture(this, CAMERA_NAME);
-    myMovie.start();
+    //myMovie = new Capture(this, CAMERA_NAME);
+    //myMovie.start();
+    myMovie = new Movie(this, "/Users/stavros/Desktop/school/TAP/NewRepo/Lines-Of-Flight/LinesOfFlight/data/TestFootage1.mov");
+    myMovie.loop();
     
     /**
      * UI
