@@ -7,8 +7,8 @@ int count = 0;
 
 public class DancerState extends State {
   SettingState settingState;
-  //Capture video;
-  Movie video;
+  Capture video;
+  //Movie video;
   OpenCV opencv;
   int counter = 0;
   //calculates distance between each position update. 
@@ -60,11 +60,11 @@ public class DancerState extends State {
   }
   
   public void setup() {
-    //this.video = new Capture(this, CAMERA_NAME);
-    //this.video.start();
-    video = new Movie(this, "/Users/chelsi/Documents/Processing/LinesOfFlight/data/TestFootage.mov");
-    video.loop();
-    video.volume(0);
+    this.video = new Capture(this, CAMERA_NAME);
+    this.video.start();
+    //video = new Movie(this, "/Users/chelsi/Documents/Processing/LinesOfFlight/data/TestFootage.mov");
+    //video.loop();
+    //video.volume(0);
     // init OpenCV with input resolution
     opencv = new OpenCV(this, vidWidth, vidHeight);
     
