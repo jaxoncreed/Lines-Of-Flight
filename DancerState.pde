@@ -7,9 +7,15 @@ int count = 0;
 
 public class DancerState extends State {
   SettingState settingState;
-  Capture video;
-  //Movie video;
+  //Capture video;
+  Movie video;
   OpenCV opencv;
+  int counter = 0;
+  //calculates distance between each position update. 
+  float d1_dist_jump;
+  float d2_dist_jump;
+  float d3_dist_jump;
+  //
   ArrayList<PVector> position = new ArrayList();
   ArrayList<Rectangle> d1_positions = new ArrayList();
   ArrayList<Rectangle> d2_positions = new ArrayList();
@@ -54,10 +60,11 @@ public class DancerState extends State {
   }
   
   public void setup() {
-    this.video = new Capture(this, CAMERA_NAME);
-    this.video.start();
-    //video = new Movie(this, "/Users/m/Documents/Processing/LinesOfFlight/data/Video2.mov");
-    //video.loop();
+    //this.video = new Capture(this, CAMERA_NAME);
+    //this.video.start();
+    video = new Movie(this, "/Users/chelsi/Documents/Processing/LinesOfFlight/data/TestFootage.mov");
+    video.loop();
+    video.volume(0);
     // init OpenCV with input resolution
     opencv = new OpenCV(this, vidWidth, vidHeight);
     
@@ -297,9 +304,10 @@ public class DancerState extends State {
         float x = (float) d1_positions.get(i).x + d1_positions.get(i).width/2;
         float y = (float) d1_positions.get(i).y + d1_positions.get(i).height/2;
         
-        //update Dancers position
+        d1_dist_jump = dist(d1.position.x, d1.position.y, x, y);
+        println(d1_dist_jump);
         d1.updatePosition(new PVector(x, y));
-  
+        
       }//end of for loop
       
       /////////////////////////////// END DANCER 1 /////////////////////////////////////////
@@ -354,7 +362,7 @@ public class DancerState extends State {
         float x = (float) d2_positions.get(i).x + d2_positions.get(i).width/2;
         float y = (float) d2_positions.get(i).y + d2_positions.get(i).height/2;
         
-         
+        d2_dist_jump = dist(d2.position.x, d2.position.y, x, y);
         //update Dancers position
         d2.updatePosition(new PVector(x, y));
   
@@ -414,6 +422,7 @@ public class DancerState extends State {
         float x = (float) d3_positions.get(i).x + d3_positions.get(i).width/2;
         float y = (float) d3_positions.get(i).y + d3_positions.get(i).height/2;
         
+        d3_dist_jump = dist(d3.position.x, d3.position.y, x, y);
         //update Dancers position
         d3.updatePosition(new PVector(x, y));
   
@@ -423,7 +432,8 @@ public class DancerState extends State {
       
     }//end of if statement
   
-
+    counter++;
+   
   }//end of draw
   
   public void captureEvent(Capture c) {

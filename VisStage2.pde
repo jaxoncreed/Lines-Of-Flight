@@ -15,12 +15,14 @@ public class VisStage2 extends VisStage {
 
   @Override
   public void display(SettingState settingState, AudienceState audienceState, DancerState dancerState) {
-    for (Dancer dancer : dancerState.dancers) {
-      drawFur(dancer);
+    if (dancerState.d1_dist_jump < jumpRange && dancerState.d2_dist_jump < jumpRange && dancerState.d3_dist_jump < jumpRange) {
+      for (Dancer dancer : dancerState.dancers) {
+        drawFur(dancer);
+      }
+      this.drawAudience(color(250, 43, 47), audienceState.audience);
+      parent.image(audLayer, 0, 0); //draw audience layer behind
+      parent.image(danLayer, 0, 0); //draw dancer layer in front
     }
-    this.drawAudience(color(250, 43, 47), audienceState.audience);
-    parent.image(audLayer, 0, 0); //draw audience layer behind
-    parent.image(danLayer, 0, 0); //draw dancer layer in front
   }
   
   void drawFur(Dancer dancer) {

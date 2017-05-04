@@ -20,6 +20,11 @@ class Dancer {
   float[][] points;
   int count;
   
+  //variables for the wispy curves in phase I
+  float PY;
+  float PX;
+  int segLength;
+  
   Dancer(color col) {
     //current starting Position is 0,0 CHANGE THIS TO BE REAL DANCERS STARTING POSITION
     this.position = new PVector(255 + 300, 200, 0);
@@ -27,6 +32,7 @@ class Dancer {
     this.speed = 0.0; 
     this.points = new float[50][2];
     this.c = col;
+    this.segLength = 5;
   } 
   
   Dancer (PVector pos) {
