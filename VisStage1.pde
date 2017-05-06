@@ -22,7 +22,7 @@ public class VisStage1 extends VisStage {
         drawCurves(dancer);
       }
       
-      this.drawAudience(color(173, 183, 247), audienceState.audience, dancerState.dancers);
+      this.drawAudience(color(173, 183, 247), audienceState, dancerState.dancers);
       
       parent.image(audLayer, 0, 0); //draw audience layer behind
       parent.image(danLayer, 0, 0); //draw dancer layer in front
