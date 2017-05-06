@@ -48,38 +48,70 @@ public class VisStage1 extends VisStage {
     }
   }
   
+  //void drawCurves(Dancer d) {
+  //  d.PX = d.position.x;
+  //  d.PY = d.position.y;
+  //  dragSegment(0, d.PX, d.PY, d);
+  //  for(int i = 0; i < d.points.length - 2; i++) {
+  //    dragSegment(i + 1, d.points[i][0], d.points[i][1], d);
+  //  }
+
+  //void dragSegment(int i, float xidx, float yidx, Dancer d) {
+  //  float dx = xidx - d.points[i][0];
+  //  float dy = yidx - d.points[i][1];
+  //  float angle = atan2(dy, dx);  
+  //  d.points[i][0] = xidx - cos(angle) * d.segLength;
+  //  d.points[i][1] = yidx - sin(angle) * d.segLength;
+  //  segment(d.points[i][0], d.points[i][1], angle, d, i);
+  //}
+
+  //void segment(float x, float y, float a, Dancer d, int i) {
+  //  danLayer.beginDraw();
+  //  danLayer.strokeWeight(2);
+  //  danLayer.stroke(d.c);
+  //  danLayer.pushMatrix();
+  //  danLayer.translate(x, y); //I don't think the line is translating
+  //  danLayer.rotate(a); //or rotating properly
+  //  danLayer.line(0, 0, d.segLength, 0);
+  //  danLayer.line(parent.getScreenAdustedX(d.old_position.x),
+  //      parent.getScreenAdustedY(d.old_position.y),
+  //      parent.getScreenAdustedX(d.position.x),
+  //      parent.getScreenAdustedY(d.position.y));
+  //  danLayer.popMatrix();
+  //  danLayer.endDraw();
+  //}
+  
   void drawCurves(Dancer d) {
+    danLayer.beginDraw();
+    danLayer.stroke(d.c);
+    danLayer.endDraw();
     d.PX = d.position.x;
     d.PY = d.position.y;
     dragSegment(0, d.PX, d.PY, d);
-    for(int i = 0; i < d.points.length - 2; i++) {
-      dragSegment(i + 1, d.points[i][0], d.points[i][1], d);
+    
+    for(int i = 0; i < d.points.length - 1; i++) {
+        dragSegment(i+1, d.points[i][0], d.points[i][1], d);
     }
   }
-  
+    
   void dragSegment(int i, float xidx, float yidx, Dancer d) {
     float dx = xidx - d.points[i][0];
     float dy = yidx - d.points[i][1];
-    float angle = atan2(dy, dx);  
+    float angle = atan2(dy, dx);
     d.points[i][0] = xidx - cos(angle) * d.segLength;
     d.points[i][1] = yidx - sin(angle) * d.segLength;
-    segment(d.points[i][0], d.points[i][1], angle, d, i);
+    segment(d.points[i][0], d.points[i][1], angle, d);
   }
   
-  void segment(float x, float y, float a, Dancer d, int i) {
+  void segment(float x, float y, float a, Dancer d) {
     danLayer.beginDraw();
-    danLayer.strokeWeight(2);
+    danLayer.strokeWeight(1);
     danLayer.stroke(d.c);
     danLayer.pushMatrix();
-    danLayer.translate(x, y); //I don't think the line is translating
-    danLayer.rotate(a); //or rotating properly
-    danLayer.line(0, 0, d.segLength, 0);
-    danLayer.line(parent.getScreenAdustedX(d.old_position.x),
-        parent.getScreenAdustedY(d.old_position.y),
-        parent.getScreenAdustedX(d.position.x),
-        parent.getScreenAdustedY(d.position.y));
+    danLayer.translate(x, y);
+    danLayer.rotate(a);
+    danLayer.line(0, 0, d.segLength, 0); //put in d.x and d.y instead of 0 for tons of cool lines
     danLayer.popMatrix();
     danLayer.endDraw();
   }
-  
 }
