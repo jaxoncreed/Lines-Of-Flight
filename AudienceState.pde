@@ -11,7 +11,7 @@ public class AudienceState extends State {
   PImage baseImg;
   PImage compared;
   int frameNum = 0;
-  int areaDimension = 8;
+  public int areaDimension = 8;
   // Kernel for edge detection
   float[][] kernel = {{ -3, -3, -3}, 
                       { -3,  23, -3}, 
@@ -22,7 +22,7 @@ public class AudienceState extends State {
   public int height = 0;
   
   public ArrayList<AudienceMember> audience;
-  
+  public float[][] densityMatrix = new float[ceil(vidWidth / areaDimension)][ceil(vidHeight / areaDimension)];
   
   AudienceState(SettingState settingState) {
     this.settingState = settingState;
@@ -60,7 +60,7 @@ public class AudienceState extends State {
   void draw() {
     image(myMovie, 0, 0);
     
-    if (frameNum % 1 == 0) {
+    if (frameNum % 1 == 0 && myMovie.width > 0) {
       
       // PRODUCE COMPARISON IMAGE
       myMovie.loadPixels();
@@ -108,7 +108,8 @@ public class AudienceState extends State {
             for (int x = areaX * areaDimension; x < (areaX * areaDimension) + areaDimension; x++) {
               compared.pixels[getIndexFromXY(x, y, myMovie.width, myMovie.height)] = color(normalized, normalized, normalized);
             }
-          } 
+          }
+          densityMatrix[areaX][areaY] = (float) normalized / 0xFF;
         }
       }
       // "compared" is an image with lighter pixels being the ones that are different.
@@ -184,18 +185,6 @@ public class AudienceState extends State {
     c.read();
   }
   
-  
-  
-  int getIndexFromXY(int x, int y, int width, int height) {
-    return (y * width) + x;
-  }
-  int[] getXYFromIndex(int index, int width, int height) {
-    int result[] = new int[2];
-    result[1] = floor(index / width);
-    result[0] = index - result[1];
-    return result;
-  }
-  
   int[] recursiveBlobCheck(int maxX, int maxY, int minX, int minY, int curX, int curY, int[][] blobs, int blobNum, PImage thresholdImg) {
     if (curX > blobs.length - 1 ||
         curX < 0 ||
@@ -237,4 +226,15 @@ public class AudienceState extends State {
     }
     baseImg.updatePixels();
   }
+}
+
+
+int getIndexFromXY(int x, int y, int width, int height) {
+  return (y * width) + x;
+}
+int[] getXYFromIndex(int index, int width, int height) {
+  int result[] = new int[2];
+  result[1] = floor(index / width);
+  result[0] = index - result[1];
+  return result;
 }

@@ -19,7 +19,7 @@ public class VisStage3 extends VisStage {
       for (Dancer dancer : dancerState.dancers) {
         drawWeb(dancer);
       }
-      this.drawAudience(color(84, 172, 174), audienceState.audience);
+      this.drawAudience(color(84, 172, 174), audienceState);
       parent.image(audLayer, 0, 0); //draw audience layer behind
       parent.image(danLayer, 0, 0); //draw dancer layer in front
     }

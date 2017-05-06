@@ -11,19 +11,23 @@ public class DancerState extends State {
   //Movie video;
   OpenCV opencv;
   int counter = 0;
+  Dancer[] dancers = {
+    new Dancer(color(255, 255, 255, 15)),
+    new Dancer(color(7, 11, 76, 15)),
+    new Dancer(color(148, 18, 96, 15))
+  };
+  int numberOfDancers = dancers.length;
   //calculates distance between each position update. 
   float d1_dist_jump;
   float d2_dist_jump;
   float d3_dist_jump;
-  //
-  ArrayList<PVector> position = new ArrayList();
-  ArrayList<Rectangle> d1_positions = new ArrayList();
-  ArrayList<Rectangle> d2_positions = new ArrayList();
-  ArrayList<Rectangle> d3_positions = new ArrayList();
+  float[] dist_jump = new float[numberOfDancers];
+  ArrayList<ArrayList<Rectangle>> positions = new ArrayList<ArrayList<Rectangle>>();
+
   PImage src;
-  ArrayList<Contour> d1_contours; // contours for color tracking
-  ArrayList<Contour> d2_contours; // contours for color tracking
-  ArrayList<Contour> d3_contours; // contours for color tracking
+  
+  ArrayList<Contour> contours = new ArrayList<Contour>();
+
   int maxColors = 3;
   int[] hues;
   int[] colors;
@@ -43,13 +47,6 @@ public class DancerState extends State {
   int blobSizeThreshold = 40;
   int blurSize = 4;
 
-
-  // Main Exportables
-  Dancer d1 = new Dancer(color(255, 255, 255, 15));
-  Dancer d2 = new Dancer(color(7, 11, 76, 15));
-  Dancer d3 = new Dancer(color(148, 18, 96, 15));
-  
-  public Dancer[] dancers = {d1, d2, d3};
   
   DancerState(SettingState settingState) {
     this.settingState = settingState;
@@ -60,6 +57,10 @@ public class DancerState extends State {
   }
   
   public void setup() {
+    for (int i = 0; i < numberOfDancers; i++) {
+      positions.add(new ArrayList<Rectangle>());
+    }
+    
     this.video = new Capture(this, CAMERA_NAME);
     this.video.start();
     //video = new Movie(this, "/Users/chelsi/Documents/Processing/LinesOfFlight/data/TestFootage.mov");
@@ -74,11 +75,6 @@ public class DancerState extends State {
     ////////////////////////
     // for color tracking //
     ////////////////////////
-    
-    //Array for detection colors
-    d1_contours = new ArrayList<Contour>();
-    d2_contours = new ArrayList<Contour>();
-    d3_contours = new ArrayList<Contour>();
     colors = new int[maxColors];
     hues = new int[maxColors];
     
@@ -211,17 +207,7 @@ public class DancerState extends State {
         //     Passing 'true' sorts them by descending area.
         if (outputs[0] != null) {
           opencv.loadImage(outputs[0]);
-          d1_contours = opencv.findContours(true,true);
-        }
-        
-        if (outputs[1] != null) {
-          opencv.loadImage(outputs[1]);
-          d2_contours = opencv.findContours(true,true);
-        }
-        
-        if (outputs[2] != null) {
-          opencv.loadImage(outputs[2]);
-          d3_contours = opencv.findContours(true,true); 
+          contours = opencv.findContours(true,true);
         }
       
       // Show images
@@ -249,58 +235,24 @@ public class DancerState extends State {
          text("press key [7,8, or 9] to select color", 10, 25);
       }
       
-      /////////////////////////////////////////////////////////////////////
-      // POPULATE DANCER'S POSITIONS AND DETECT AND DISPLAY BOUNDING BOX //
-      /////////////////////////////////////////////////////////////////////
-  
-      /////////////////////////////// DANCER 1 /////////////////////////////////////////
-  
-      ////this populates for ALL contour bounding boxed
-      //for (int i = 0; i < d1_contours.size(); i++) {
-      //  Contour contour = d1_contours.get(i);
-      //  Rectangle r = contour.getBoundingBox();
-      //  d1_positions.add(r);
-        
-      //  if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
-      //    continue;
-        
-      //  //draw rectangles for detected bounding boxes
-      //  stroke(255, 255, 255);
-      //  fill(255, 255, 255, 150);
-      //  strokeWeight(2);
-      //  rect(r.x, r.y, r.width, r.height);
-      //}
-      
       //this populates the BIGGEST contour bounding box
       // <9> Check to make sure we've found any contours
-      if (d1_contours.size() > 0) {
-        // <9> Get the first contour, which will be the largest one
-        Contour biggestContour = d1_contours.get(0);
-        // <10> Find the bounding box of the largest contour,
-        // and hence our object.
-        Rectangle r = biggestContour.getBoundingBox();
-        d1_positions.add(r);
-        
-        // <11> Draw the bounding box of our object
-        //stroke(255, 255, 255);
-        //fill(255, 255, 255, 150);
-        //strokeWeight(2);
-        //rect(r.x, r.y, r.width, r.height);
-        
-        // <12> Draw a dot in the middle of the bounding box, on the object.
-        noStroke(); 
-        fill(255, 255, 255);
-        ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
+      if (contours.size() > 0) {
+        for (int i = 0; i < contours.size() && i < positions.size(); i++) {
+          Rectangle r = contours.get(i).getBoundingBox();
+          positions.get(i).add(r);
+          noStroke(); 
+          fill(255, 255, 255);
+          ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
+          float x = r.x + r.width/2;
+          float y = r.y + r.height/2;
+          dancers[i].updatePosition(new PVector(x, y));
+        }        
       }
     
-      for (int i = 0; i < d1_positions.size(); i++) {
-        
-        //getting the normal position of the bounding box
-        //float x = (float) d1_positions.get(i).x;
-        //float y = (float) d1_positions.get(i).y;
-        
-        //UPDATING DANCER'S POSITION BASED ON THE CENTER OF THE BIGGEST BOUNDING BOX
-        //getting the center of the bounding box as position
+    
+      // TODO: add this back in to improve accuracy
+      /*for (int i = 0; i < d1_positions.size(); i++) {
         float x = (float) d1_positions.get(i).x + d1_positions.get(i).width/2;
         float y = (float) d1_positions.get(i).y + d1_positions.get(i).height/2;
         
@@ -308,127 +260,8 @@ public class DancerState extends State {
         println(d1_dist_jump);
         d1.updatePosition(new PVector(x, y));
         
-      }//end of for loop
-      
-      /////////////////////////////// END DANCER 1 /////////////////////////////////////////
-      
-      /////////////////////////////// DANCER 2 /////////////////////////////////////////
-      ////this populates for ALL contour bounding boxed
-      //for (int i = 0; i < d2_contours.size(); i++) {
-      //  Contour contour = d2_contours.get(i);
-      //  Rectangle r = contour.getBoundingBox();
-      //  d2_positions.add(r);
-        
-      //  if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
-      //    continue;
-        
-      //  //draw rectangles for detected bounding boxes
-      //  stroke(255, 255, 255);
-      //  fill(255, 255, 255, 150);
-      //  strokeWeight(2);
-      //  rect(r.x, r.y, r.width, r.height);
-      //}
-      
-      //this populates the BIGGEST contour bounding box
-      // <9> Check to make sure we've found any contours
-      if (d2_contours.size() > 0) {
-        // <9> Get the first contour, which will be the largest one
-        Contour biggestContour = d2_contours.get(0);
-        // <10> Find the bounding box of the largest contour,
-        // and hence our object.
-        Rectangle r = biggestContour.getBoundingBox();
-        d2_positions.add(r);
-        
-        // <11> Draw the bounding box of our object
-        //stroke(255, 255, 255);
-        //fill(255, 255, 255, 150);
-        //strokeWeight(2);
-        //rect(r.x, r.y, r.width, r.height);
-        
-        // <12> Draw a dot in the middle of the bounding box, on the object.
-        noStroke(); 
-        fill(255, 255, 255);
-        ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
-      }
-      
-      for (int i = 0; i < d2_positions.size(); i++) {
-    
-        //getting the normal position of the bounding box
-        //float x = (float) d2_positions.get(i).x;
-        //float y = (float) d2_positions.get(i).y;
-        
-        //UPDATING DANCER'S POSITION BASED ON THE CENTER OF THE BIGGEST BOUNDING BOX
-        //getting the center of the bounding box as position
-        float x = (float) d2_positions.get(i).x + d2_positions.get(i).width/2;
-        float y = (float) d2_positions.get(i).y + d2_positions.get(i).height/2;
-        
-        d2_dist_jump = dist(d2.position.x, d2.position.y, x, y);
-        //update Dancers position
-        d2.updatePosition(new PVector(x, y));
-  
-      }//end of for loop
-      
-      /////////////////////////////// END DANCER 2 /////////////////////////////////////////
-      
-      /////////////////////////////// DANCER 3 /////////////////////////////////////////
-      ////this populates for ALL contour bounding boxed
-      //for (int i = 0; i < d3_contours.size(); i++) {
-      //  Contour contour = d3_contours.get(i);
-      //  Rectangle r = contour.getBoundingBox();
-      //  d3_positions.add(r);
-        
-      //  if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
-      //    continue;
-        
-      //  //draw rectangles for detected bounding boxes
-      //  stroke(255, 255, 255);
-      //  fill(255, 255, 255, 150);
-      //  strokeWeight(2);
-      //  rect(r.x, r.y, r.width, r.height);
-      //}
-      
-      //this populates the BIGGEST contour bounding box
-      // <9> Check to make sure we've found any contours
-      if (d3_contours.size() > 0) {
-        // <9> Get the first contour, which will be the largest one
-        Contour biggestContour = d3_contours.get(0);
-        // <10> Find the bounding box of the largest contour,
-        // and hence our object.
-        Rectangle r = biggestContour.getBoundingBox();
-        d3_positions.add(r);
-        
-        // <11> Draw the bounding box of our object
-        //stroke(255, 255, 255);
-        //fill(255, 255, 255, 150);
-        //strokeWeight(2);
-        //rect(r.x, r.y, r.width, r.height);
-        
-        // <12> Draw a dot in the middle of the bounding box, on the object.
-        if (colorToChange == -1) {
-          noStroke(); 
-          fill(255, 255, 255);
-          ellipse(r.x * 2 + r.width/2, r.y * 2 + r.height/2, 30, 30);
-        }
-      }
-      
-      for (int i = 0; i < d3_positions.size(); i++) {
-        
-        //getting the normal position of the bounding box
-        //float x = (float) d3_positions.get(i).x;
-        //float y = (float) d3_positions.get(i).y;
-        
-        //UPDATING DANCER'S POSITION BASED ON THE CENTER OF THE BIGGEST BOUNDING BOX
-        //getting the center of the bounding box as position
-        float x = (float) d3_positions.get(i).x + d3_positions.get(i).width/2;
-        float y = (float) d3_positions.get(i).y + d3_positions.get(i).height/2;
-        
-        d3_dist_jump = dist(d3.position.x, d3.position.y, x, y);
-        //update Dancers position
-        d3.updatePosition(new PVector(x, y));
-  
-      }//end of for loop
-      
-      /////////////////////////////// END DANCER 3 /////////////////////////////////////////
+      }//end of for loop*/
+
       
     }//end of if statement
   
